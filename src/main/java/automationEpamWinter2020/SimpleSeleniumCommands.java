@@ -1,23 +1,25 @@
-package linkedIn.selenium;
+package automationEpamWinter2020;
 
-import org.openqa.selenium.Alert;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-public class SimpleRequest {
+import java.util.concurrent.TimeUnit;
 
+public class SimpleSeleniumCommands {
+
+    private static final String PATH_TO_THE_CHROME_DRIVER_ON_EPAM_LAPTOP = "C:\\WebDrivers\\chromedriver79.exe";
+    private static final String PATH_TO_THE_CHROME_DRIVER_ON_HOME_LAPTOP = "B:\\Drivers\\chromedriver79.exe";
     private static WebDriver driver;
 
     @BeforeClass
     public void init() {
-        System.setProperty("webdriver.chrome.driver", "C:\\WebDrivers\\chromedriver79.exe");
+        System.setProperty("webdriver.chrome.driver", PATH_TO_THE_CHROME_DRIVER_ON_HOME_LAPTOP);
         driver = new ChromeDriver();
         driver.manage().window().maximize();
     }
@@ -48,8 +50,9 @@ public class SimpleRequest {
         button.click();
     }
 
+    // після 12 слайда
     @Test
-    public void autocomplete() {
+    public void autocompleteWithTreadSleep() {
         driver.get("https://formy-project.herokuapp.com/autocomplete");
 
         WebElement autocompleteAddress = driver.findElement(By.id("autocomplete"));
@@ -62,6 +65,34 @@ public class SimpleRequest {
         }
 
         WebElement autocompleteResult = driver.findElement(By.className("pac-item"));
+        autocompleteResult.click();
+    }
+
+    @Test
+    public void autocompleteWithImplicitlyWait() {
+        driver.get("https://formy-project.herokuapp.com/autocomplete");
+
+        WebElement autocompleteAddress = driver.findElement(By.id("autocomplete"));
+        autocompleteAddress.sendKeys("1555 park Blvd, Palo Alto, CA");
+
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+
+        WebElement autocompleteResult = driver.findElement(By.className("pac-item"));
+        autocompleteResult.click();
+    }
+
+    @Test
+    public void autocompleteWithExplicitWait() {
+        driver.get("https://formy-project.herokuapp.com/autocomplete");
+
+        WebElement autocompleteAddress = driver.findElement(By.id("autocomplete"));
+        autocompleteAddress.sendKeys("1555 park Blvd, Palo Alto, CA");
+
+        WebDriverWait wait = new WebDriverWait(driver, 10);
+
+        WebElement autocompleteResult =
+                wait.until(ExpectedConditions.visibilityOfElementLocated(
+                        By.className("pac-item")));
         autocompleteResult.click();
     }
 
@@ -126,6 +157,51 @@ public class SimpleRequest {
         WebElement box = driver.findElement(By.id("box"));
         Actions actions = new Actions(driver);
         actions.dragAndDrop(image, box).build().perform();
+    }
+
+    // 6 слайд
+    @Test
+    public void radioButton() {
+        driver.get("https://formy-project.herokuapp.com/radiobutton");
+
+        WebElement firstRadioButton = driver.findElement(By.id("radio-button-1"));
+        firstRadioButton.click();
+
+        WebElement secondRadioButton = driver.findElement(By.cssSelector("input[value='option2']"));
+        secondRadioButton.click();
+
+        WebElement thirdRadioButton = driver.findElement(By.xpath("//div[@class='container']/div[3]/input"));
+        thirdRadioButton.click();
+    }
+
+    @Test
+    public void datePicker() {
+        driver.get("https://formy-project.herokuapp.com/datepicker");
+
+        WebElement datePicker = driver.findElement(By.id("datepicker"));
+        datePicker.sendKeys("03/03/2020");
+        datePicker.sendKeys(Keys.RETURN);
+    }
+
+    @Test
+    public void dropDownMenu() {
+        driver.get("https://formy-project.herokuapp.com/dropdown");
+
+        WebElement dropDownMenu = driver.findElement(By.id("dropdownMenuButton"));
+        dropDownMenu.click();
+
+        WebElement pageScroll = driver.findElement(By.linkText("Page Scroll"));
+        pageScroll.click();
+
+    }
+
+    @Test
+    public void fileUpload() {
+        driver.get("https://formy-project.herokuapp.com/fileupload");
+
+        WebElement fileUploadField = driver.findElement(By.id("file-upload-field"));
+        fileUploadField.sendKeys("B:\\For me\\photo.jpg");
+
     }
 
 }
